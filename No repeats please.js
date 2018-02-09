@@ -1,27 +1,44 @@
 function permAlone(str) {
-  var arr = str.split("");      // split str into array of the letters
-  var result = 0;               // create result variable
 
-  function swap(a,b) {          // create function swap thats swaps the letters on call
-    var tmp = arr[a];
-    arr[a] = arr[b];
-    arr[b] = tmp;
+  // Create a regex to match repeated consecutive characters.
+  const regex = /(.)\1+/g;
+
+  // Split the string into an array of characters.
+  let arr = str.split('');
+  let permutations = [];
+  let tmp;
+
+  // Return 0 if str contains same character.
+  if (str.match(regex) !== null && str.match(regex)[0] === str) return 0;
+
+  // Function to swap variables' content.
+  function swap(index1, index2) {
+    [arr[index1], arr[index2]] = [arr[index2], arr[index1]];
   }
 
-  function generate(n) {        // create function generate with argument n
-    var regex = /([a-z])\1+/;   // create regexp that looks for 1 letter 2 times in a row
-
-    if(n === 1 && !regex.test(arr.join(""))) {  // if the argument is 1 and there is no letter 2times in a row
-      result++;                                 // add 1 to result
+  // Generate arrays of permutations using the algorithm.
+  function generate(int) {
+    if (int === 1) {
+      // Make sure to join the characters as we create  the permutation arrays
+      permutations.push(arr.join(''));
     } else {
-      for(var i = 0; i !== n; i++) {            // else swap the letters around and try again
-        generate(n - 1);
-        swap(n % 2 ? 0 : i, n - 1);
+      for (let i = 0; i != int; ++i) {
+        generate(int - 1);
+        swap(int % 2 ? 0 : i, int - 1);
       }
     }
   }
+
   generate(arr.length);
-  return result;
+
+  // Filter the array of repeated permutations.
+  var filtered = permutations.filter(function (string) {
+    return !string.match(regex);
+  });
+
+  // Return how many have no repetitions.
+  return filtered.length;
 }
 
+// Test here.
 permAlone('aab');
